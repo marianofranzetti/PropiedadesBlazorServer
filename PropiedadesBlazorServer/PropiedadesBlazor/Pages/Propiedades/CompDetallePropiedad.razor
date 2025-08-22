@@ -1,0 +1,58 @@
+﻿@page "/detalle-propiedad/{Id:int}"
+@using Modelos.DTO
+@using Repositorio.IRepositorio
+@inject IPropiedadRepositorio PropiedadRepositorio
+
+
+<h1 class="text-center">Detalle Propiedad</h1>
+
+
+        <div class="card">
+            <div class="card-header">
+                <div class="row">
+                    <h2>@propiedadDTO.Nombre</h2>
+                </div>
+            </div>
+            <div class="card-body">
+
+                @if (propiedadDTO.UrlImagenes != null)
+                {
+                    <div class="row">
+                        @foreach (var imagen in propiedadDTO.UrlImagenes)
+                        {
+                            <div class="col-4">
+                                <img src="@imagen" class="img-fluid">
+                            </div>
+                        }
+                    </div>
+                }              
+                <ul class="list-group">
+                    <li class="list-group-item"><strong>Descripción: </strong>@propiedadDTO.Descripcion</li>
+                    <li class="list-group-item"><strong>Área: </strong>@propiedadDTO.Area</li>
+                    <li class="list-group-item"><strong>Baños: </strong>@propiedadDTO.Banios</li>
+                    <li class="list-group-item"><strong>Parqueadero: </strong>@propiedadDTO.Parqueadero</li>
+                    <li class="list-group-item"><strong>Precio: </strong>@propiedadDTO.Precio</li>
+                    <li class="list-group-item"><strong>Activo: </strong>@propiedadDTO.Activo</li>
+                    <li class="list-group-item"><strong>Fecha de Actualización: </strong>@propiedadDTO.FechaActualizacion</li>
+                </ul>
+            </div>
+
+            <div class="card-footer">
+                <NavLink href="/" class="btn btn-secondary"><i class="bi bi-arrow-left-circle-fill"></i> Volver a lista</NavLink>
+            </div>
+        </div>
+
+
+
+@code {
+    private PropiedadDTO propiedadDTO { get; set; } = new PropiedadDTO();
+    [Parameter]
+    public int? Id { get; set; }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        propiedadDTO = await PropiedadRepositorio.GetPropiedad(Id.Value);
+        propiedadDTO.UrlImagenes = propiedadDTO.ImagenPropiedad.Select(i => i.UrlImagenPropiedad).ToList();
+    }
+}
